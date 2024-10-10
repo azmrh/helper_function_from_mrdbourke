@@ -35,15 +35,16 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 
 # Our function needs a different name to sklearn's plot_confusion_matrix
-def make_confusion_matrix(y_true, y_pred, classes=None, figsize=(10, 10), text_size=15, norm=False, savefig=False): 
+def make_confusion_matrix(model,y_true, x_test, classes=None, figsize=(10, 10), text_size=15, norm=False, savefig=False): 
   """Makes a labelled confusion matrix comparing predictions and ground truth labels.
 
   If classes is passed, confusion matrix will be labelled, if not, integer class values
   will be used.
 
   Args:
+    model: The model on which confusion matrix will be made
     y_true: Array of truth labels (must be same shape as y_pred).
-    y_pred: Array of predicted labels (must be same shape as y_true).
+    x_test: Array of test set (must be same shape as y_true).
     classes: Array of class labels (e.g. string form). If `None`, integer labels are used.
     figsize: Size of output figure (default=(10, 10)).
     text_size: Size of output figure text (default=15).
@@ -61,6 +62,9 @@ def make_confusion_matrix(y_true, y_pred, classes=None, figsize=(10, 10), text_s
                           text_size=10)
   """  
   # Create the confustion matrix
+  y_pred=model.predict(x_test)
+  y_pred=np.argmax(y_pred,axis=1)
+  y_test=y_test.reshape(y_pred.shape)
   cm = confusion_matrix(y_true, y_pred)
   cm_norm = cm.astype("float") / cm.sum(axis=1)[:, np.newaxis] # normalize it
   n_classes = cm.shape[0] # find the number of classes we're dealing with
